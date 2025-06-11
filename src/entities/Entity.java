@@ -2,8 +2,14 @@ package entities;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
+import GameStates.Playing;
 import Window.Game;
+import utils.LoadSave;
+
+import static utils.Constants.Directions.*;
+import static utils.HelpMethods.CanMoveHere;
 
 public abstract class Entity {
 
@@ -19,6 +25,10 @@ public abstract class Entity {
     protected Rectangle2D.Float attackBox;
     protected float walkSpeed;
 
+    protected int pushBackDir;
+    protected float pushDrawOffset;
+    protected int pushBackOffsetDir = UP;
+
     public Entity(float x, float y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -26,14 +36,39 @@ public abstract class Entity {
         this.height = height;
     }
 
+    protected void updatePushBackDrawOffset() {
+        float speed = 0.95f;
+        float limit = -30f;
+
+        if (pushBackOffsetDir == UP) {
+            pushDrawOffset -= speed;
+            if (pushDrawOffset <= limit)
+                pushBackOffsetDir = DOWN;
+        } else {
+            pushDrawOffset += speed;
+            if (pushDrawOffset >= 0)
+                pushDrawOffset = 0;
+        }
+    }
+
+    protected void pushBack(int pushBackDir, int[][] lvlData, float speedMulti) {
+        float xSpeed = 0;
+        if (pushBackDir == LEFT)
+            xSpeed = -walkSpeed;
+        else
+            xSpeed = walkSpeed;
+
+        if (CanMoveHere(hitbox.x + xSpeed * speedMulti, hitbox.y, hitbox.width, hitbox.height, lvlData))
+            hitbox.x += xSpeed * speedMulti;
+    }
+
     protected void drawAttackBox(Graphics g, int xLvlOffset) {
-        g.setColor(Color.RED);
-        g.drawRect((int) attackBox.x - xLvlOffset, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
+        g.setColor(Color.red);
+        g.drawRect((int) (attackBox.x - xLvlOffset), (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 
     protected void drawHitbox(Graphics g, int xLvlOffset) {
-        // For debugging the hitbox
-        g.setColor(Color.PINK);
+        g.setColor(Color.BLUE);
         g.drawRect((int) hitbox.x - xLvlOffset, (int) hitbox.y, (int) hitbox.width, (int) hitbox.height);
     }
 
@@ -53,9 +88,10 @@ public abstract class Entity {
         return aniIndex;
     }
 
-    public int getCurrentHealth() {
-        return currentHealth;
+    protected void newState(int state) {
+        this.state = state;
+        aniTick = 0;
+        aniIndex = 0;
     }
-
 
 }

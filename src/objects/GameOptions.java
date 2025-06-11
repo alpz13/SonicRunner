@@ -50,7 +50,6 @@ public class GameOptions extends State implements Statemethods {
     public void update() {
         menuB.update();
         audioOptions.update();
-
     }
 
     @Override
@@ -60,7 +59,6 @@ public class GameOptions extends State implements Statemethods {
 
         menuB.draw(g);
         audioOptions.draw(g);
-
     }
 
     public void mouseDragged(MouseEvent e) {
@@ -73,7 +71,6 @@ public class GameOptions extends State implements Statemethods {
             menuB.setMousePressed(true);
         } else
             audioOptions.mousePressed(e);
-
     }
 
     @Override
@@ -83,9 +80,7 @@ public class GameOptions extends State implements Statemethods {
                 Gamestate.state = Gamestate.MENU;
         } else
             audioOptions.mouseReleased(e);
-
         menuB.resetBools();
-
     }
 
     @Override
@@ -96,14 +91,12 @@ public class GameOptions extends State implements Statemethods {
             menuB.setMouseOver(true);
         else
             audioOptions.mouseMoved(e);
-
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
             Gamestate.state = Gamestate.MENU;
-
     }
 
     @Override
@@ -121,4 +114,5 @@ public class GameOptions extends State implements Statemethods {
     private boolean isIn(MouseEvent e, PauseButton b) {
         return b.getBounds().contains(e.getX(), e.getY());
     }
+
 }
